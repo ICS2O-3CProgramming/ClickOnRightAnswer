@@ -73,6 +73,9 @@ local correct
 -- Displays the level text of time text
 local level1Text 
 
+-- Boolean variable that states if user clicked the answer or not
+local alreadyClickedAnswer = false
+
 
 -----------------------------------------------------------------------------------------
 -- SOUND
@@ -145,7 +148,7 @@ end
 
 local function RestartScene()
 
-    wrong.isVisible = false
+    alreadyClickedAnswer = false
     correct.isVisible = false
 
     livesText.text = "Number of lives = " .. tostring(lives)
@@ -167,7 +170,9 @@ local function TouchListenerAnswer(touch)
     -- get the user answer from the text object that was clicked on
     local userAnswer = answerTextObject.text
 
-    if (touch.phase == "ended") then
+    if (touch.phase == "ended") and (alreadyClickedAnswer == false) then
+
+        alreadyClickedAnswer = true
 
         -- if the user gets the answer right, display Correct and call RestartSceneRight
         if (answer == tonumber(userAnswer)) then     
@@ -185,11 +190,12 @@ local function TouchListenerWrongAnswer1(touch)
     -- get the user answer from the text object that was clicked on
     local userAnswer = wrongAnswer1TextObject.text
 
-    if (touch.phase == "ended") then
-        
+    if (touch.phase == "ended") and (alreadyClickedAnswer == false) then
+
+        alreadyClickedAnswer = true
+
+
         if (answer ~= tonumber(userAnswer)) then
-            -- display "Wrong"
-            wrong.isVisible = true
             -- decrease a life
             lives = lives - 1
             -- call RestartScene after 1 second
@@ -204,11 +210,12 @@ local function TouchListenerWrongAnswer2(touch)
     local userAnswer = wrongAnswer2TextObject.text
 
       
-        if (touch.phase == "ended") then
+        if (touch.phase == "ended") and (alreadyClickedAnswer == false) then
+
+            alreadyClickedAnswer = true
+
 
             if (answer ~= tonumber(userAnswer)) then
-                -- display "Wrong"
-                wrong.isVisible = true
                 -- decrease a life
                 lives = lives - 1
                 -- call RestartScene after 1 second
@@ -286,11 +293,6 @@ function scene:create( event )
     correct:setTextColor(100/255, 47/255, 210/255)
     correct.isVisible = false
 
-    -- create the text object that will say Wrong, set the colour and then hide it
-    wrong = display.newText("Wrong", display.contentWidth/2, display.contentHeight*1/3, nil, 50 )
-    wrong:setTextColor(100/255, 47/255, 210/255)
-    wrong.isVisible = false 
-
     -- create the text object that will say Out of Time, set the colour and then hide it
     outOfTimeText = display.newText("Out of Time!", display.contentWidth*2/5, display.contentHeight*1/3, nil, 50)
     outOfTimeText:setTextColor(100/255, 47/255, 210/255)
@@ -309,7 +311,6 @@ function scene:create( event )
     sceneGroup:insert( wrongAnswer1TextObject )
     sceneGroup:insert( wrongAnswer2TextObject )
     sceneGroup:insert( congratulationText )
-    sceneGroup:insert( wrong )
     sceneGroup:insert( correct )
     sceneGroup:insert( level1Text )
 end
